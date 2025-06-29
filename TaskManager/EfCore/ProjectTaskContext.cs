@@ -20,6 +20,8 @@ public class ProjectTaskContext : DbContext
             .HasKey(b => b.Id)
             .HasName("tasks_pkey");
 
-        modelBuilder.Entity<ProjectTask>().Property(p => p.Id).ValueGeneratedOnAdd();
+        _ = modelBuilder.Entity<ProjectTask>().Property(p => p.Id).ValueGeneratedOnAdd();
+        _ = modelBuilder.Entity<ProjectTask>().Property(p => p.Title).HasMaxLength(Constants.MaxLength100).IsRequired(true);
+        _ = modelBuilder.Entity<ProjectTask>().Property(p => p.Description).HasMaxLength(Constants.MaxLength1000).IsRequired(true);
     }
 }

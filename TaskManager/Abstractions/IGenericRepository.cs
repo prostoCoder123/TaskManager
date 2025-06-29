@@ -4,23 +4,23 @@ namespace TaskManager.Abstractions;
 
 public interface IGenericRepository<TEntity> where TEntity : class
 {
-  IQueryable<TEntity> Get(
-      Expression<Func<TEntity, bool>>? _filter = null,
-      Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? _orderBy = null,
-      string _includeProperties = "",
-      (int pageNumber, int elementsOnPage)? _paging = null);
+    IQueryable<TEntity> Get(
+        Expression<Func<TEntity, bool>>? _filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? _orderBy = null,
+        string _includeProperties = "",
+        (int pageNumber, int elementsOnPage)? _paging = null);
 
-  TEntity? GetById(int? _id);
+    TEntity? GetById(int? _id);
 
-  void Insert(TEntity _entityToInsert);
+    void Insert(TEntity _entityToInsert);
 
-  void Update(TEntity _entityToUpdate);
+    void Update(TEntity _entityToUpdate);
 
-  void Delete(int _id);
+    void Delete(int _id);
 
-  void Delete(TEntity _entityToDelete);
+    void Delete(TEntity _entityToDelete);
 
-  void DeleteRange(IEnumerable<TEntity> _entitiesToDelete);
+    void DeleteRange(IEnumerable<TEntity> _entitiesToDelete);
 
-  int Count(Func<TEntity, bool>? _filter = null);
+    int Count(Func<TEntity, bool>? _filter = null);
 }

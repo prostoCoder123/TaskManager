@@ -34,8 +34,8 @@ public class TasksController(ITaskService taskService, ILogger<TasksController> 
     }
 
     [HttpPost]
-    public IActionResult AddTask()
+    public IActionResult AddTask([FromBody] CreateTaskDto taskToCreate)
     {
-        return BadRequest();
+        return Ok(taskToCreate);
     }
 }

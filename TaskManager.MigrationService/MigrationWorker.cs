@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using TaskManager.EfCore;
+﻿using Entities;
 using Microsoft.EntityFrameworkCore;
-
 using OpenTelemetry.Trace;
-using Entities;
+using System.Diagnostics;
+using TaskManager.EfCore;
 
 namespace TaskManager.MigrationService;
 
