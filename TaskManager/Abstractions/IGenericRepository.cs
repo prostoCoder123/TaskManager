@@ -10,17 +10,17 @@ public interface IGenericRepository<TEntity> where TEntity : class
         string includeProperties = "",
         (int pageNumber, int elementsOnPage)? paging = null);
 
-    Task<TEntity?> GetByIdAsync(int? id);
+    Task<TEntity?> GetByIdAsync(int? id, CancellationToken ct = default);
 
-    Task InsertAsync(TEntity entityToInsert);
+    Task InsertAsync(TEntity entityToInsert, CancellationToken ct = default);
 
     void Update(TEntity entityToUpdate);
 
-    Task DeleteAsync(int id);
+    Task DeleteAsync(int id, CancellationToken ct = default);
 
     void Delete(TEntity entityToDelete);
 
     void DeleteRange(IEnumerable<TEntity> entitiesToDelete);
 
-    Task<int> CountAsync(Expression<Func<TEntity, bool>>? filter);
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? filter, CancellationToken ct = default);
 }

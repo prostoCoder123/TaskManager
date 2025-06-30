@@ -13,4 +13,9 @@ public interface ITaskService
     Task<(ProjectTask? createdTask, IEnumerable<string> errors)> AddTaskAsync(
         ProjectTask taskToAdd,
         CancellationToken ct = default);
+
+    Task<(ProjectTask? updatedTask, IEnumerable<string> errors)> UpdateTaskAsync(
+        ProjectTask taskToUpdate,
+        UpdateTaskDto taskToMapFrom,
+        CancellationToken ct = default);
 }

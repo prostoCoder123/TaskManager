@@ -1,7 +1,6 @@
 using AutoMapper;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.NetworkInformation;
 using TaskManager.Abstractions;
 using TaskManager.Dto;
 
@@ -9,7 +8,11 @@ namespace TaskManager.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TasksController(ITaskService taskService, IMapper mapper, ILogger<TasksController> logger) : ControllerBase
+public class TasksController(
+    ITaskService taskService,
+    IMapper mapper,
+    ITaskRepository taskRepository,
+    ILogger<TasksController> logger) : ControllerBase
 {
     /// <summary>
     /// Возвращает страницу с задачами (отсортированные по дате создания по убыванию)
@@ -44,7 +47,7 @@ public class TasksController(ITaskService taskService, IMapper mapper, ILogger<T
     [HttpPost]
     [ProducesResponseType<ProjectTask>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddTask([FromBody] CreateTaskDto taskToCreateDto)
+    public async Task<IActionResult> AddTaskAsync([FromBody] CreateTaskDto taskToCreateDto)
     {
         logger.LogInformation("Try to add the task with the name '{name}'",
             taskToCreateDto.Title.Substring(0, Math.Min(taskToCreateDto.Title.Length, 20)));
@@ -58,5 +61,29 @@ public class TasksController(ITaskService taskService, IMapper mapper, ILogger<T
             string.Join("\n", errors.Take(5)));
 
         return errors.Any() ? BadRequest(errors) : Ok(createdTask);
+    }
+
+    [HttpPatch]
+    [ProducesResponseType<ProjectTask>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateTaskAsync([FromBody] UpdateTaskDto taskToUpdateDto, CancellationToken ct = default)
+    {
+        logger.LogInformation("Try to update the task with the Id '{Id}'", taskToUpdateDto.Id);
+
+        var task = await taskRepository.GetByIdAsync(taskToUpdateDto.Id, ct);
+
+        if (task == null)
+        {
+            return NotFound();
+        }
+
+        (ProjectTask? updatedTask, IEnumerable<string> errors) = await taskService.UpdateTaskAsync(task, taskToUpdateDto, ct);
+
+        logger.LogInformation("Task updated: {IsUpdated}, Errors: {Errors}",
+            updatedTask == null ? "no" : "yes",
+            string.Join("\n", errors.Take(5)));
+
+        return errors.Any() ? BadRequest(errors) : Ok(updatedTask);
     }
 }

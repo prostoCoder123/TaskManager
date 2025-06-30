@@ -6,12 +6,9 @@ public class FutureDateAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
-        if (value != null && value is DateTime date)
+        if (value == null || value is DateTime date && date > DateTime.Now) // LOCAL TIME
         {
-            if (date > DateTime.Now) // LOCAL TIME
-            {
-                return ValidationResult.Success!;
-            }
+            return ValidationResult.Success!;
         }
 
         return new ValidationResult($"The {validationContext.DisplayName} field must be a future date.");

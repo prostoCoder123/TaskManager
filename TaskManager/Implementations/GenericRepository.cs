@@ -17,9 +17,9 @@ public class GenericRepository<TEntity>(DbContext context) : IGenericRepository<
         (int pageNumber, int elementsOnPage)? paging = null) =>
       Get(filter).ApplyOrderBy(orderBy).ApplyPaging(paging).ApplyInclude(includeProperties);
 
-    public async Task<TEntity?> GetByIdAsync(int? id) => await dbSet.FindAsync(id);
+    public async Task<TEntity?> GetByIdAsync(int? id, CancellationToken ct = default) => await dbSet.FindAsync(id, ct);
 
-    public async Task InsertAsync(TEntity entityToInsert) => await dbSet.AddAsync(entityToInsert);
+    public async Task InsertAsync(TEntity entityToInsert, CancellationToken ct = default) => await dbSet.AddAsync(entityToInsert, ct);
 
     public void Update(TEntity entityToUpdate)
     {
@@ -27,9 +27,9 @@ public class GenericRepository<TEntity>(DbContext context) : IGenericRepository<
         context.Entry(entityToUpdate).State = EntityState.Modified; // the entity with all the props is modified !!!
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id, CancellationToken ct = default)
     {
-        TEntity? entityToDelete = await dbSet.FindAsync(id);
+        TEntity? entityToDelete = await dbSet.FindAsync(id, ct);
         if (entityToDelete != null)
         {
             Delete(entityToDelete);
@@ -59,8 +59,8 @@ public class GenericRepository<TEntity>(DbContext context) : IGenericRepository<
         dbSet.RemoveRange(entitiesToDelete);
     }
 
-    public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? filter = null) =>
-        filter == null ? await dbSet.CountAsync() : await dbSet.CountAsync(filter);
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? filter = null, CancellationToken ct = default) =>
+        filter == null ? await dbSet.CountAsync() : await dbSet.CountAsync(filter, ct);
 
     private IQueryable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null)
     {
