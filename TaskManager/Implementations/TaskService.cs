@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using System.Linq.Expressions;
 using TaskManager.Abstractions;
 using TaskManager.Dto;
@@ -7,7 +8,10 @@ using TaskManager.EfCore;
 
 namespace TaskManager.Implementations;
 
-public class TaskService(ITaskRepository taskRepository, IUnitOfWork unitOfWork, ProjectTaskContext context) : ITaskService
+public class TaskService(
+    ITaskRepository taskRepository,
+    IUnitOfWork unitOfWork,
+    ProjectTaskContext context) : ITaskService
 {
     private static Expression<Func<ProjectTask, bool>> FilterByStatus(
         ProjectTaskStatus? status = null
@@ -59,12 +63,23 @@ public class TaskService(ITaskRepository taskRepository, IUnitOfWork unitOfWork,
             }
             catch (Exception ex)
             {
-                var t = ex;
                 await transaction.RollbackAsync();
+
+                if (ex is DbUpdateException) //TODO: fix autoincrement
+                {
+                    if ((ex.GetBaseException() as NpgsqlException)?.SqlState == "23505") // Data duplication
+                    {
+                        errors = [ "Duplicated task names are not allowed" ];
+                    }
+                }
+                else
+                {
+                    throw;
+                }
             }
         });
 
-        return (taskToAdd, []);
+        return (taskToAdd, errors);
     }
 
     private IEnumerable<string> ValidateTaskToAdd(ProjectTask taskToAdd)

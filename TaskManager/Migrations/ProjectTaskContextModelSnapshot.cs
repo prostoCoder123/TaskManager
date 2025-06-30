@@ -59,6 +59,9 @@ namespace TaskManager.Migrations
                     b.HasKey("Id")
                         .HasName("tasks_pkey");
 
+                    b.HasIndex("Title")
+                        .IsUnique();
+
                     b.ToTable("project_tasks", (string)null);
                 });
 #pragma warning restore 612, 618

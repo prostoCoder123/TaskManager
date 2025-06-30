@@ -12,7 +12,7 @@ using TaskManager.EfCore;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(ProjectTaskContext))]
-    [Migration("20250629234023_InitialCreate")]
+    [Migration("20250630074720_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -61,6 +61,9 @@ namespace TaskManager.Migrations
 
                     b.HasKey("Id")
                         .HasName("tasks_pkey");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
 
                     b.ToTable("project_tasks", (string)null);
                 });

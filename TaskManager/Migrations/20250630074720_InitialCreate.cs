@@ -33,6 +33,12 @@ namespace TaskManager.Migrations
                 {
                     table.PrimaryKey("tasks_pkey", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_project_tasks_Title",
+                table: "project_tasks",
+                column: "Title",
+                unique: true);
         }
 
         /// <inheritdoc />
