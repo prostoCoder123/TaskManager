@@ -18,4 +18,6 @@ public interface ITaskService
         ProjectTask taskToUpdate,
         UpdateTaskDto taskToMapFrom,
         CancellationToken ct = default);
+
+    Task<(IEnumerable<ProjectTask>?, IEnumerable<string>)> FixOverDueTasksAsync(CancellationToken ct = default);
 }

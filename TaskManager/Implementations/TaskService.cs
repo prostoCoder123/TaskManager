@@ -31,7 +31,7 @@ public class TaskService(
         var tasks = taskRepository.Get(
             filter: filter,
             paging: paging,
-            orderBy: _q => _q.OrderByDescending(c => c.CreatedAt)
+            orderBy: q => q.OrderByDescending(c => c.CreatedAt)
         )
         .AsAsyncEnumerable();
 
@@ -54,7 +54,10 @@ public class TaskService(
             return (null, errors);
         }
 
-        return await ExecuteTransactionAsync(taskToAdd, async (t, ct) => await taskRepository.InsertAsync(t, ct));
+        return await ExecuteTransactionAsync(
+            taskToAdd,
+            async (t, ct) => await taskRepository.InsertAsync(t, ct),
+            ct);
     }
 
     public async Task<(ProjectTask? updatedTask, IEnumerable<string> errors)> UpdateTaskAsync(
@@ -73,12 +76,33 @@ public class TaskService(
         {
             mapper.Map(taskToMapFrom, t);
             taskRepository.Update(t);
-        });
+        }, ct);
     }
 
-    private async Task<(ProjectTask? updatedTask, IEnumerable<string> errors)> ExecuteTransactionAsync(
-         ProjectTask entity,
-         Action<ProjectTask, CancellationToken> operation,
+    public async Task<(IEnumerable<ProjectTask>?, IEnumerable<string>)> FixOverDueTasksAsync(CancellationToken ct = default)
+    {
+        // find all the tasks that are not completed at the specified time
+        IQueryable<ProjectTask> tasksToFix = taskRepository.Get(
+            filter: t => t.Status != ProjectTaskStatus.Completed &&
+                         t.CompletedAt == null &&
+                         t.DueDate <= DateTime.UtcNow); // TODO: paging
+
+        return tasksToFix.Any() 
+            ? await ExecuteTransactionAsync(
+                tasksToFix, (t, ct) =>
+                {
+                    foreach (ProjectTask task in tasksToFix)
+                    {
+                        task.Status = ProjectTaskStatus.OverDue;
+                        taskRepository.Update(task);
+                    }
+                }, ct)
+            : (null, []);
+    }
+
+    private async Task<(T? updated, IEnumerable<string> errors)> ExecuteTransactionAsync<T>(
+         T entity,
+         Action<T, CancellationToken> operation,
          CancellationToken ct = default)
     {
         var errors = new List<string>();

@@ -7,9 +7,12 @@ var migrations = builder.AddProject<Projects.TaskManager_MigrationService>("migr
     .WithReference(tasksDb)
     .WaitFor(tasksDb);
 
-builder.AddProject<Projects.TaskManager>("taskmanager")
+var taskManager = builder.AddProject<Projects.TaskManager>("taskmanager")
     .WithReference(tasksDb)
     .WithReference(migrations)
-    .WaitForCompletion(migrations); ;
+    .WaitForCompletion(migrations);
+
+var taskWorker = taskManager = builder.AddProject<Projects.TaskManager_OverDueTasksWorker>("taskworker")
+    .WaitFor(taskManager);
 
 builder.Build().Run();

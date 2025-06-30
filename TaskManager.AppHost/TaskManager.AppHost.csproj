@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TaskManager.MigrationService\TaskManager.MigrationService.csproj" />
+    <ProjectReference Include="..\TaskManager.OverDueTasksWorker\TaskManager.OverDueTasksWorker.csproj" />
     <ProjectReference Include="..\TaskManager\TaskManager.csproj" />
   </ItemGroup>
 
