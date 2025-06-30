@@ -25,22 +25,22 @@ A project task is an entity that has following properties:
 
 To launch this app first of all make sure that Docker is running on your machine.
 
-Select the TaskManager.AppHost project as startup project and the 'https' profile and then click on Run button.
+Select the TaskManager.AppHost project as startup project and the 'https' profile and then click Run (F5).
 
-The app page will be opened in your web-browser, where you can see all the docker containers that will start in the defined order.
-Wait until the taskmanager container will be in the 'Running' state and then click on the app link such as:
+The panel with the distributed app will be opened in your web-browser, where you can see all the docker containers that will start in the defined order.
+Wait until the taskmanager container will be in the 'Running' state and then click on the taskmanager url such as:
 https://localhost:7096
 
 ## WEB API
 
 To retrieve tasks enter the url https://localhost:7096/tasks in the browser address bar.
-This GET method returns the first page with tasks ordered by CreatedAt prop (the default count of tasks on page = 3).
+This GET method returns the first page with the existing tasks sorted by CreatedAt prop in descending order (the default count of tasks per page is 3).
 
 You can configure page and filter settings by adding url query parameters as shown below:
 https://localhost:7096/tasks?count=5&page=0&status=new
 https://localhost:7096/tasks?count=2&page=1&status=inprogress
 
-To create Task send POST request to https://localhost:7096/tasks with the body as shown below:
+To create a task send POST request to https://localhost:7096/tasks with the body as shown below:
 ```
 {
     "title": "new task 3",
@@ -48,14 +48,25 @@ To create Task send POST request to https://localhost:7096/tasks with the body a
     "dueDate": "2025-06-30T19:25:43.511Z"
 }
 ```
-To update some properties of the task send PATCH request to https://localhost:7096/tasks with the body as shown below:
+To update some properties of a task send PATCH request to https://localhost:7096/tasks with the body as shown below:
 ```
 {
     "id": 5,
     "title": "task to implement"
 }
 ```
-
+OR
+```
+{
+    "id": 5,
+    "status": 1
+}
+```
+Task statuses are mappped in the following way:
+0 = New
+1 = InProgress
+2 = Completed
+3 = OverDue
 
 
 
