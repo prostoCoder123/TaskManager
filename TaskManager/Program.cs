@@ -2,6 +2,7 @@ using Entities;
 using TaskManager.Abstractions;
 using TaskManager.EfCore;
 using TaskManager.Implementations;
+using TaskManager.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.AddNpgsqlDbContext<ProjectTaskContext>("tasksdb");
 
 // Add services to the container.
 builder.Services
+    .AddAutoMapper(c => c.AddProfile<TaskMappingProfile>())
     .AddTransient<ITaskRepository, TaskRepository>()
     .AddTransient<IGenericRepository<ProjectTask>, TaskRepository>()
     .AddTransient<IUnitOfWork, UnitOfWork>()

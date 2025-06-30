@@ -14,7 +14,7 @@ public class ProjectTaskContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        _ = modelBuilder.HasPostgresEnum<ProjectTaskStatus>(name: "task_status");
+        modelBuilder.HasPostgresEnum<ProjectTaskStatus>(name: "task_status");
 
         _ = modelBuilder.Entity<ProjectTask>().ToTable("project_tasks")
             .HasKey(b => b.Id)

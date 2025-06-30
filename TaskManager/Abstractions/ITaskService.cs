@@ -9,4 +9,8 @@ public interface ITaskService
         (int pageNumber, int elementsOnPage) paging,
         ProjectTaskStatus? status,
         CancellationToken ct = default);
+
+    Task<(ProjectTask? createdTask, IEnumerable<string> errors)> AddTaskAsync(
+        ProjectTask taskToAdd,
+        CancellationToken ct = default);
 }
