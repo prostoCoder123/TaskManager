@@ -48,6 +48,8 @@ To create a task send POST request to https://localhost:7096/tasks with the body
     "dueDate": "2025-06-30T19:25:43.511Z"
 }
 ```
+Note that you can not create two tasks with the same names.
+
 To update some properties of a task send PATCH request to https://localhost:7096/tasks with the body as shown below:
 ```
 {
@@ -59,10 +61,13 @@ OR
 ```
 {
     "id": 5,
-    "status": 1
+    "status": 1,
+    "description": "new description"
 }
 ```
-Task statuses are mappped in the following way:
+etc.
+
+Task statuses are mapped in the following way:
 0 = New
 1 = InProgress
 2 = Completed
