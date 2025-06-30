@@ -17,6 +17,7 @@ A project task is an entity that has following properties:
 - Title
 - Description
 - DueDate
+- Status
 - CreatedAt
 - UpdatedAt
 - CompletedAt
@@ -70,10 +71,11 @@ OR
 etc.
 
 Task statuses are mapped in the following way:
-0 = New
-1 = InProgress
-2 = Completed
-3 = OverDue
+
+- 0 = New
+- 1 = InProgress
+- 2 = Completed
+- 3 = OverDue
 
 
 
