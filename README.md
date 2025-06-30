@@ -34,10 +34,12 @@ https://localhost:7096
 ## WEB API
 
 To retrieve tasks enter the url https://localhost:7096/tasks in the browser address bar.
-This GET method returns the first page with the existing tasks sorted by CreatedAt prop in descending order (the default count of tasks per page is 3).
+This GET method returns the first page with the existing tasks sorted by CreatedAt in descending order (the default count of tasks per page is 3).
 
 You can configure page and filter settings by adding url query parameters as shown below:
+
 https://localhost:7096/tasks?count=5&page=0&status=new
+
 https://localhost:7096/tasks?count=2&page=1&status=inprogress
 
 To create a task send POST request to https://localhost:7096/tasks with the body as shown below:
@@ -48,7 +50,7 @@ To create a task send POST request to https://localhost:7096/tasks with the body
     "dueDate": "2025-06-30T19:25:43.511Z"
 }
 ```
-Note that you can not create two tasks with the same names.
+Note that you can not create two tasks with the same titles.
 
 To update some properties of a task send PATCH request to https://localhost:7096/tasks with the body as shown below:
 ```
