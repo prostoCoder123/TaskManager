@@ -89,8 +89,8 @@ public class TaskService(
                          t.CompletedAt == null &&
                          t.DueDate <= DateTime.UtcNow, // compare in utc
             orderBy: t => t.OrderBy(x => x.Id))
+        .Take(Constants.MaxElementsOnPage) // TODO: handle all by portions
         .ToList();
-        // TODO: paging
 
         return tasksToFix.Any() 
             ? await ExecuteTransactionAsync(
@@ -112,7 +112,7 @@ public class TaskService(
     {
         var errors = new List<string>();
 
-        var strategy = context.Database.CreateExecutionStrategy();
+        var strategy = context.Database.CreateExecutionStrategy(); // TODO: ResilientTransaction
         await strategy.ExecuteAsync(async () =>
         {
             await using var transaction = await unitOfWork.BeginTransactionAsync(ct);

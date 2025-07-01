@@ -5,8 +5,8 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.AddServiceDefaults();
 
 // Add services to the container.
-builder.Services.AddHttpClient(); // Register IHttpClientFactory
-//TODO: Polly retry policy
+// Register IHttpClientFactory
+builder.Services.AddHttpClient(); // TODO: configure Polly retry policy
 
 builder.Services.AddHostedService<TasksHostedService>(); // singleton
 

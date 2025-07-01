@@ -7,19 +7,22 @@ public class TasksHostedService(
     IHttpClientFactory httpClientFactory,
     ILogger<TasksHostedService> logger) : IHostedService, IDisposable
 {
-    private Timer? _timer = null;
+    private Timer? timer = null;
     private int executionCount = 0;
-    private const int executionIntervalMinutes = 2;
+    private const int ExecutionIntervalInMinutes = 2;
+
+    //TODO: read from the config
+    private const string TaskManagerApiUrl = "https://localhost:7096/tasks/overdue";
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation("Timed Hosted Service running.");
 
-        _timer = new Timer(
+        timer = new Timer(
             async _ => await FindAndUpdateOverDueTasks(stoppingToken),
             null,
             TimeSpan.Zero,
-            TimeSpan.FromMinutes(executionIntervalMinutes)
+            TimeSpan.FromMinutes(ExecutionIntervalInMinutes)
         );
 
         return Task.CompletedTask;
@@ -27,18 +30,18 @@ public class TasksHostedService(
 
     private async Task FindAndUpdateOverDueTasks(CancellationToken ct = default)
     {
+        // This method handles an overflow condition by wrapping:
+        // if location = Int32.MaxValue, location + 1 = Int32.MinValue.
+        // No exception is thrown.
         var count = Interlocked.Increment(ref executionCount);
 
         logger.LogInformation("Timed Hosted Service is working. Execution time: {Time:G}, Execution count: {Count}",
             DateTime.Now,
             count);
 
-        var httpRequestMessage = new HttpRequestMessage(
-            HttpMethod.Patch,
-            "https://localhost:7096/tasks/overdue"); //TODO
-
-        var httpClient = httpClientFactory.CreateClient();
-        var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
+        using HttpClient httpClient = httpClientFactory.CreateClient();
+        using HttpRequestMessage httpRequestMessage = new(HttpMethod.Patch, TaskManagerApiUrl);
+        using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
@@ -51,8 +54,9 @@ public class TasksHostedService(
         }
         else
         {
-            // TODO: test
-            logger.LogError("Errors occured: {Errors}", await httpResponseMessage.Content.ReadAsStreamAsync());
+            logger.LogError("Errors occured: {Errors}, Status code: {Code}",
+                await httpResponseMessage.Content.ReadAsStringAsync(),
+                httpResponseMessage.StatusCode);
         }
     }
 
@@ -60,13 +64,13 @@ public class TasksHostedService(
     {
         logger.LogInformation("Timed Hosted Service is stopping.");
 
-        _timer?.Change(Timeout.Infinite, 0);
+        timer?.Change(Timeout.Infinite, 0);
 
         return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        _timer?.Dispose();
+        timer?.Dispose();
     }
 }

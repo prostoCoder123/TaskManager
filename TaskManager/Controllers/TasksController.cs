@@ -89,6 +89,7 @@ public class TasksController(
 
     [HttpPatch("overdue")]
     [ProducesResponseType<IEnumerable<ProjectTask>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> FixOverDueTasksAsync(CancellationToken ct = default)
     {
         (IEnumerable<ProjectTask>? tasks, IEnumerable<string> errors) = await taskService.FixOverDueTasksAsync(ct);
