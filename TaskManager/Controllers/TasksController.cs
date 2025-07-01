@@ -47,14 +47,14 @@ public class TasksController(
     [HttpPost]
     [ProducesResponseType<ProjectTask>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddTaskAsync([FromBody] CreateTaskDto taskToCreateDto)
+    public async Task<IActionResult> AddTaskAsync([FromBody] CreateTaskDto taskToCreateDto, CancellationToken ct = default)
     {
         logger.LogInformation("Try to add the task with the name '{name}'",
             taskToCreateDto.Title.Substring(0, Math.Min(taskToCreateDto.Title.Length, 20)));
 
         var task = mapper.Map<ProjectTask>(taskToCreateDto);
 
-        (ProjectTask? createdTask, IEnumerable<string> errors) = await taskService.AddTaskAsync(task);
+        (ProjectTask? createdTask, IEnumerable<string> errors) = await taskService.AddTaskAsync(task, ct);
 
         logger.LogInformation("Task created: {IsCreated}, Errors: {Errors}",
             createdTask == null ? "no" : "yes",

@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.OverDueTasksWorker", "TaskManager.OverDueTasksWorker\TaskManager.OverDueTasksWorker.csproj", "{E7F900C5-4C6E-4D46-B7B7-B04DD8F3090F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Tests", "TaskManager.Tests\TaskManager.Tests.csproj", "{BD9AA781-A639-4F21-B495-C2C6AA8DBDBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{E7F900C5-4C6E-4D46-B7B7-B04DD8F3090F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7F900C5-4C6E-4D46-B7B7-B04DD8F3090F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7F900C5-4C6E-4D46-B7B7-B04DD8F3090F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD9AA781-A639-4F21-B495-C2C6AA8DBDBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD9AA781-A639-4F21-B495-C2C6AA8DBDBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD9AA781-A639-4F21-B495-C2C6AA8DBDBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD9AA781-A639-4F21-B495-C2C6AA8DBDBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

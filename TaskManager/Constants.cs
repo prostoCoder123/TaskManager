@@ -13,4 +13,6 @@ public static class Constants
     public const int MaxLength1000 = 1000;
 
     public const int MinLength3 = 3;
+
+    public const string AllowedCharsRegexTemplate = "^[a-zA-Zа-яА-Я0-9.?!, -]+$";
 }

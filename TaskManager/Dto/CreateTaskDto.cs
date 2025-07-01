@@ -6,12 +6,12 @@ public class CreateTaskDto
 {
     [MinLength(Constants.MinLength3)]
     [MaxLength(Constants.MaxLength100)]
-    //TODO: regular expr
+    [RegularExpression(Constants.AllowedCharsRegexTemplate)]
     public string Title { get; init; } = default!;
 
     [MinLength(Constants.MinLength3)]
     [MaxLength(Constants.MaxLength1000)]
-    //TODO: regular expr
+    [RegularExpression(Constants.AllowedCharsRegexTemplate)]
     public string Description { get; init; } = default!;
 
     [FutureDate]
