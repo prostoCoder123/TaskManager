@@ -74,10 +74,10 @@ namespace TaskManager.Tests
         {
             // Arrange
             var task = new ProjectTask() { Id = 1, Title = "Update dependencies", Description = "Reinstall and update NuGet packages", CreatedAt = new(2025, 3, 13, 10, 0, 0, DateTimeKind.Utc), Status = ProjectTaskStatus.Completed, CompletedAt = new(2025, 3, 15, 12, 8, 3, DateTimeKind.Utc), DueDate = new(2025, 3, 15, 15, 0, 0, DateTimeKind.Utc), UpdatedAt = new(2025, 3, 15, 12, 8, 3, DateTimeKind.Utc) };
-            
+
             var mockService = new Mock<ITaskService>();
             mockService.Setup(r => r.GetTaskByIdAsync(It.IsIn(task.Id), It.IsAny<CancellationToken>())).ReturnsAsync(task);
-            
+
             var mockRepo = new Mock<ITaskRepository>();
             var mockMapper = new Mock<IMapper>();
             var mockLogger = new Mock<ILogger<TasksController>>();

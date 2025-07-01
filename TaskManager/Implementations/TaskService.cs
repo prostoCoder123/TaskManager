@@ -92,7 +92,7 @@ public class TaskService(
         .Take(Constants.MaxElementsOnPage) // TODO: handle all by portions
         .ToArray();
 
-        return tasksToFix.Any() 
+        return tasksToFix.Any()
             ? await ExecuteTransactionAsync(
                 tasksToFix, (t, ct) =>
                 {
@@ -182,7 +182,7 @@ public class TaskService(
     {
         if (taskToUpdate.Status == ProjectTaskStatus.OverDue)
         {
-            return [ "Can not modify a task with the 'OverDue' status" ];
+            return ["Can not modify a task with the 'OverDue' status"];
         }
 
         if ((taskToMapFrom.Title == null || taskToUpdate.Title == taskToMapFrom.Title) &&
@@ -190,7 +190,7 @@ public class TaskService(
             (taskToMapFrom.Status == null || taskToUpdate.Status == taskToMapFrom.Status) &&
             (taskToMapFrom.DueDate == null || taskToUpdate.DueDate == taskToMapFrom.DueDate))
         {
-            return [ "Nothing has changed" ];
+            return ["Nothing has changed"];
         }
 
         ICollection<string> errors = ValidateTaskToAdd(taskToUpdate).ToList();
