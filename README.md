@@ -53,6 +53,11 @@ To create a task send POST request to https://localhost:7096/tasks with the body
 ```
 Note that you can not create two tasks with the same titles.
 
+Make sure you specified the correct timezone for timestamps:
+
+"2025-06-30T19:25:43.511Z" belongs to UTC timezone (+00:00),
+"2025-06-30T19:25:43.511+03:00" belong to 'Europe/Moscow' timezone, etc.
+
 To update some properties of a task send PATCH request to https://localhost:7096/tasks with the body as shown below:
 ```
 {

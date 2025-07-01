@@ -33,6 +33,7 @@ public class TaskService(
             paging: paging,
             orderBy: q => q.OrderByDescending(c => c.CreatedAt)
         )
+        .AsNoTracking()
         .AsAsyncEnumerable();
 
         return new TasksPageDto()
@@ -82,10 +83,14 @@ public class TaskService(
     public async Task<(IEnumerable<ProjectTask>?, IEnumerable<string>)> FixOverDueTasksAsync(CancellationToken ct = default)
     {
         // find all the tasks that are not completed at the specified time
-        IQueryable<ProjectTask> tasksToFix = taskRepository.Get(
+        IEnumerable<ProjectTask> tasksToFix = taskRepository.Get(
             filter: t => t.Status != ProjectTaskStatus.Completed &&
+                         t.Status != ProjectTaskStatus.OverDue &&
                          t.CompletedAt == null &&
-                         t.DueDate <= DateTime.UtcNow); // TODO: paging
+                         t.DueDate <= DateTime.UtcNow, // compare in utc
+            orderBy: t => t.OrderBy(x => x.Id))
+        .ToList();
+        // TODO: paging
 
         return tasksToFix.Any() 
             ? await ExecuteTransactionAsync(
@@ -162,7 +167,7 @@ public class TaskService(
             errors.Add($"Task description can not be more than {Constants.MaxLength1000} characters");
         }
 
-        if (taskToAdd.DueDate <= DateTime.UtcNow.AddHours(1)) // TODO: minimal difference from now
+        if (taskToAdd.DueDate <= DateTime.UtcNow.AddMinutes(1)) // TODO: minimal difference from now
         {
             errors.Add("Task due date must be a future date");
         }

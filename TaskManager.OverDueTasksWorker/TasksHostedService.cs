@@ -1,7 +1,5 @@
 using Entities;
-using System.Net.Http;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TaskManager.OverDueTasksWorker;
 
@@ -31,7 +29,9 @@ public class TasksHostedService(
     {
         var count = Interlocked.Increment(ref executionCount);
 
-        logger.LogInformation("Timed Hosted Service is working. Count: {Count}", count);
+        logger.LogInformation("Timed Hosted Service is working. Execution time: {Time:G}, Execution count: {Count}",
+            DateTime.Now,
+            count);
 
         var httpRequestMessage = new HttpRequestMessage(
             HttpMethod.Patch,
@@ -51,6 +51,7 @@ public class TasksHostedService(
         }
         else
         {
+            // TODO: test
             logger.LogError("Errors occured: {Errors}", await httpResponseMessage.Content.ReadAsStreamAsync());
         }
     }
