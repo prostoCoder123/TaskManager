@@ -90,7 +90,7 @@ public class TaskService(
                          t.DueDate <= DateTime.UtcNow, // compare in utc
             orderBy: t => t.OrderBy(x => x.Id))
         .Take(Constants.MaxElementsOnPage) // TODO: handle all by portions
-        .ToList();
+        .ToArray();
 
         return tasksToFix.Any() 
             ? await ExecuteTransactionAsync(
@@ -104,6 +104,9 @@ public class TaskService(
                 }, ct)
             : (null, []);
     }
+
+    public async Task<ProjectTask?> GetTaskByIdAsync(int taskId, CancellationToken ct = default) =>
+        await taskRepository.GetByIdAsync(taskId, ct);
 
     private async Task<(T? updated, IEnumerable<string> errors)> ExecuteTransactionAsync<T>(
          T entity,

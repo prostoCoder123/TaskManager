@@ -10,6 +10,8 @@ builder.AddServiceDefaults();
 
 builder.AddNpgsqlDbContext<ProjectTaskContext>("tasksdb");
 
+builder.Services.AddResponseCaching();
+
 // Add services to the container.
 builder.Services
     .AddAutoMapper(c => c.AddProfile<TaskMappingProfile>())
@@ -29,6 +31,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseResponseCaching();
 
 app.UseHttpsRedirection();
 

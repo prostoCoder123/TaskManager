@@ -96,4 +96,15 @@ public class TasksController(
 
         return errors.Any() ? BadRequest(errors) : Ok(tasks);
     }
+
+    [HttpGet("{taskId:int:min(0):max(123456789)}")]
+    [ProducesResponseType<ProjectTask>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)] // cache-control: public,max-age=120
+    public async Task<IActionResult> GetTaskByIdAsync(int taskId, CancellationToken ct = default)
+    {
+        ProjectTask? task = await taskService.GetTaskByIdAsync(taskId, ct);
+
+        return task == null ? NotFound() : Ok(task);
+    }
 }

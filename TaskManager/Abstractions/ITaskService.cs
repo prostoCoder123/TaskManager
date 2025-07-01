@@ -20,4 +20,6 @@ public interface ITaskService
         CancellationToken ct = default);
 
     Task<(IEnumerable<ProjectTask>?, IEnumerable<string>)> FixOverDueTasksAsync(CancellationToken ct = default);
+
+    Task<ProjectTask?> GetTaskByIdAsync(int taskId, CancellationToken ct = default);
 }
