@@ -6,7 +6,8 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 // Register IHttpClientFactory
-builder.Services.AddHttpClient(); // TODO: configure Polly retry policy
+// (retry policy is configured in ConfigureHttpClientDefaults -> AddStandardResilienceHandler)
+builder.Services.AddHttpClient();
 
 builder.Services.AddHostedService<TasksHostedService>(); // singleton
 

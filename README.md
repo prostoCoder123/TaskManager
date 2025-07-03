@@ -30,7 +30,7 @@ Select the TaskManager.AppHost project as startup project and the 'https' profil
 
 The panel with the distributed app will be opened in your web-browser, where you can see all the docker containers that will start in the defined order.
 Wait until the taskmanager container will be in the 'Running' state and then click on the taskmanager url such as:
-https://localhost:7096
+https://localhost:7096/health
 
 ## WEB API
 
