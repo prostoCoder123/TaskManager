@@ -71,10 +71,9 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper) : ITaskService,
             return (null, errors);
         }
 
-        return await ExecuteTransactionAsync(taskToUpdate, (t, ct) =>
+        return await ExecuteTransactionAsync(taskToUpdate, (task, ct) =>
         {
-            mapper.Map(taskToMapFrom, t);
-            unitOfWork.TaskRepository.Update(t);
+            mapper.Map(taskToMapFrom, task); // partial updates supported
         }, ct);
     }
 
@@ -96,8 +95,7 @@ public class TaskService(IUnitOfWork unitOfWork, IMapper mapper) : ITaskService,
                 {
                     foreach (ProjectTask task in tasksToFix)
                     {
-                        task.Status = ProjectTaskStatus.OverDue;
-                        unitOfWork.TaskRepository.Update(task);
+                        task.Status = ProjectTaskStatus.OverDue;  // partial updates supported
                     }
                 }, ct)
             : (null, []);

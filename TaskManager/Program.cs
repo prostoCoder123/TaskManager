@@ -1,4 +1,5 @@
 using Entities;
+using TaskManager;
 using TaskManager.Abstractions;
 using TaskManager.EfCore;
 using TaskManager.Implementations;
@@ -11,6 +12,8 @@ builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<ProjectTaskContext>("tasksdb");
 
 builder.Services.AddResponseCaching();
+
+builder.Services.AddScoped<ErrorHandlingFilterService>();
 
 // Add services to the container.
 builder.Services

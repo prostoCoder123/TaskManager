@@ -23,3 +23,7 @@ Content-Type: application/json
 
 ###
 GET {{TaskManager_HostAddress}}/tasks/11
+
+
+###
+GET {{TaskManager_HostAddress}}/tasks/throw-exception

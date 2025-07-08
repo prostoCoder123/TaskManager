@@ -8,6 +8,7 @@ namespace TaskManager.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ServiceFilter<ErrorHandlingFilterService>]
 public class TasksController(
     ITaskService taskService,
     IMapper mapper,
@@ -105,5 +106,11 @@ public class TasksController(
         ProjectTask? task = await taskService.GetTaskByIdAsync(taskId, ct);
 
         return task == null ? NotFound() : Ok(task);
+    }
+
+    [HttpGet("throw-exception")]
+    public IActionResult TestException(CancellationToken ct = default)
+    {
+        throw new NotImplementedException("Test error filter service");
     }
 }

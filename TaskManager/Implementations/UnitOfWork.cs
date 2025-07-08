@@ -9,8 +9,6 @@ public class UnitOfWork(
   ITaskRepository taskRepository) : IUnitOfWork, IDisposable
 {
     public ITaskRepository TaskRepository { get; } = taskRepository;
-
-    //public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken _ct = default) => dbContext.Database.BeginTransactionAsync(_ct);
     public IExecutionStrategy CreateExecutionStrategy() => dbContext.Database.CreateExecutionStrategy();
 
     public async Task SaveAsync(CancellationToken _ct = default) => _ = await dbContext.SaveChangesAsync(_ct);

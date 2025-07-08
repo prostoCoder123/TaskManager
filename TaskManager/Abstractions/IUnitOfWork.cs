@@ -13,7 +13,6 @@ namespace TaskManager.Abstractions;
 public interface IUnitOfWork : IDisposable
 {
     ITaskRepository TaskRepository { get; }
-    //Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default);
     IExecutionStrategy CreateExecutionStrategy();
     Task SaveAsync(CancellationToken ct = default);
 }
