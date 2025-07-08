@@ -78,11 +78,10 @@ public class TaskControllerTests
         var mockService = new Mock<ITaskService>();
         mockService.Setup(r => r.GetTaskByIdAsync(It.IsIn(task.Id), It.IsAny<CancellationToken>())).ReturnsAsync(task);
 
-        var mockRepo = new Mock<ITaskRepository>();
         var mockMapper = new Mock<IMapper>();
         var mockLogger = new Mock<ILogger<TasksController>>();
 
-        var controller = new TasksController(mockService.Object, mockMapper.Object, mockRepo.Object, mockLogger.Object);
+        var controller = new TasksController(mockService.Object, mockMapper.Object, mockLogger.Object);
 
         // Act
         var result = await controller.GetTaskByIdAsync(task.Id, default);
@@ -90,7 +89,6 @@ public class TaskControllerTests
         // Assert
         var OkResult = Assert.IsType<OkObjectResult>(result);
         mockService.Verify(m => m.GetTaskByIdAsync(task.Id, default), Times.Once());
-        mockRepo.Verify(m => m.GetByIdAsync(task.Id, default), Times.Never());
     }
 
     [Fact]
@@ -102,11 +100,10 @@ public class TaskControllerTests
         var mockService = new Mock<ITaskService>();
         mockService.Setup(r => r.GetTaskByIdAsync(It.IsIn(task.Id), It.IsAny<CancellationToken>())).ReturnsAsync(task);
 
-        var mockRepo = new Mock<ITaskRepository>();
         var mockMapper = new Mock<IMapper>();
         var mockLogger = new Mock<ILogger<TasksController>>();
 
-        var controller = new TasksController(mockService.Object, mockMapper.Object, mockRepo.Object, mockLogger.Object);
+        var controller = new TasksController(mockService.Object, mockMapper.Object, mockLogger.Object);
         var missingId = 5;
 
         // Act
@@ -115,7 +112,6 @@ public class TaskControllerTests
         // Assert
         var notFoundResult = Assert.IsType<NotFoundResult>(result);
         mockService.Verify(m => m.GetTaskByIdAsync(missingId, default), Times.Once());
-        mockRepo.Verify(m => m.GetByIdAsync(missingId, default), Times.Never());
     }
 
     private IList<ValidationResult> ValidateModel(object model)

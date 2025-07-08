@@ -4,6 +4,9 @@ using System.Net;
 
 namespace TaskManager;
 
+/// <summary>
+/// Filter to handle unhandled exceptions
+/// </summary>
 public class ErrorHandlingFilterService(ILogger<ErrorHandlingFilterService> logger) : IExceptionFilter
 {
     private const string errorMessage = "An error occurred while processing your request.";

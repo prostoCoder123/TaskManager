@@ -1,10 +1,10 @@
-@TaskManager_HostAddress = https://localhost:7096
+@TaskManager_TaskApiAddress = https://localhost:7096/api/tasks
 
-GET {{TaskManager_HostAddress}}/tasks?page=0&count=5
+GET {{TaskManager_TaskApiAddress}}?page=0&count=5
 Accept: application/json
 
 ###
-POST {{TaskManager_HostAddress}}/tasks
+POST {{TaskManager_TaskApiAddress}}
 Content-Type: application/json
 {
     "title": "new task",
@@ -14,7 +14,17 @@ Content-Type: application/json
 ###
 
 ###
-PATCH {{TaskManager_HostAddress}}/tasks
+POST {{TaskManager_TaskApiAddress}}
+Content-Type: application/json
+{
+    "title": "new task 2",
+    "description": "some description",
+    "dueDate": "2025-07-09T19:25:43.511Z"
+}
+###
+
+###
+PATCH {{TaskManager_TaskApiAddress}}
 Content-Type: application/json
 {
     "id": 11,
@@ -22,8 +32,8 @@ Content-Type: application/json
 }
 
 ###
-GET {{TaskManager_HostAddress}}/tasks/11
+GET {{TaskManager_TaskApiAddress}}/11
 
 
 ###
-GET {{TaskManager_HostAddress}}/tasks/throw-exception
+GET {{TaskManager_TaskApiAddress}}/error

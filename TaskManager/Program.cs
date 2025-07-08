@@ -18,12 +18,13 @@ builder.Services.AddScoped<ErrorHandlingFilterService>();
 // Add services to the container.
 builder.Services
     .AddAutoMapper(c => c.AddProfile<TaskMappingProfile>())
-    .AddTransient<ITaskRepository, TaskRepository>()
-    .AddTransient<IGenericRepository<ProjectTask>, TaskRepository>()
-    .AddTransient<IUnitOfWork, UnitOfWork>()
-    .AddTransient<ITaskService, TaskService>();
+    .AddScoped<ITaskRepository, TaskRepository>()
+    .AddScoped<IGenericRepository<ProjectTask>, TaskRepository>()
+    .AddScoped<IUnitOfWork, UnitOfWork>()
+    .AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

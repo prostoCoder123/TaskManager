@@ -7,7 +7,7 @@ using TaskManager.Dto;
 namespace TaskManager.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ServiceFilter<ErrorHandlingFilterService>]
 public class TasksController(
     ITaskService taskService,
@@ -108,7 +108,7 @@ public class TasksController(
         return task == null ? NotFound() : Ok(task);
     }
 
-    [HttpGet("throw-exception")]
+    [HttpGet("error")]
     public IActionResult TestException(CancellationToken ct = default)
     {
         throw new NotImplementedException("Test error filter service");
