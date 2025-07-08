@@ -12,6 +12,14 @@ var taskManager = builder.AddProject<Projects.TaskManager>("taskmanager")
     .WithReference(migrations)
     .WaitForCompletion(migrations);
 
+// Add the Vue.js project as an NpmApp
+builder.AddNpmApp("vue", "../taskmanager.ui")
+    .WithReference(taskManager)
+    .WaitFor(taskManager)
+    .WithHttpEndpoint(port: 65089, targetPort: 65088) //TODO
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
+
 var taskWorker = taskManager = builder.AddProject<Projects.TaskManager_OverDueTasksWorker>("taskworker")
     .WaitFor(taskManager);
 
