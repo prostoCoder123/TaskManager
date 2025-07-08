@@ -5,19 +5,17 @@ using Npgsql;
 using System.Linq.Expressions;
 using TaskManager.Abstractions;
 using TaskManager.Dto;
-using TaskManager.EfCore;
 
 namespace TaskManager.Implementations;
 
-public class TaskService(
-    ITaskRepository taskRepository,
-    IUnitOfWork unitOfWork,
-    IMapper mapper,
-    ProjectTaskContext context) : ITaskService
+/// <inheritdoc />
+public class TaskService(IUnitOfWork unitOfWork, IMapper mapper) : ITaskService, IDisposable
 {
     private static Expression<Func<ProjectTask, bool>> FilterByStatus(
         ProjectTaskStatus? status = null
     ) => t => status == null || t.Status == status;
+
+    private bool disposed;
 
     public async Task<TasksPageDto> GetTasksAsync(
         (int pageNumber, int elementsOnPage) paging,
@@ -26,9 +24,9 @@ public class TaskService(
     {
         var filter = FilterByStatus(status);
 
-        int filteredCount = await taskRepository.CountAsync(filter);
+        int filteredCount = await unitOfWork.TaskRepository.CountAsync(filter);
 
-        var tasks = taskRepository.Get(
+        var tasks = unitOfWork.TaskRepository.Get(
             filter: filter,
             paging: paging,
             orderBy: q => q.OrderByDescending(c => c.CreatedAt)
@@ -57,7 +55,7 @@ public class TaskService(
 
         return await ExecuteTransactionAsync(
             taskToAdd,
-            async (t, ct) => await taskRepository.InsertAsync(t, ct),
+            async (t, ct) => await unitOfWork.TaskRepository.InsertAsync(t, ct),
             ct);
     }
 
@@ -76,14 +74,14 @@ public class TaskService(
         return await ExecuteTransactionAsync(taskToUpdate, (t, ct) =>
         {
             mapper.Map(taskToMapFrom, t);
-            taskRepository.Update(t);
+            unitOfWork.TaskRepository.Update(t);
         }, ct);
     }
 
     public async Task<(IEnumerable<ProjectTask>?, IEnumerable<string>)> FixOverDueTasksAsync(CancellationToken ct = default)
     {
         // find all the tasks that are not completed at the specified time
-        IEnumerable<ProjectTask> tasksToFix = taskRepository.Get(
+        IEnumerable<ProjectTask> tasksToFix = unitOfWork.TaskRepository.Get(
             filter: t => t.Status != ProjectTaskStatus.Completed &&
                          t.Status != ProjectTaskStatus.OverDue &&
                          t.CompletedAt == null &&
@@ -99,14 +97,14 @@ public class TaskService(
                     foreach (ProjectTask task in tasksToFix)
                     {
                         task.Status = ProjectTaskStatus.OverDue;
-                        taskRepository.Update(task);
+                        unitOfWork.TaskRepository.Update(task);
                     }
                 }, ct)
             : (null, []);
     }
 
     public async Task<ProjectTask?> GetTaskByIdAsync(int taskId, CancellationToken ct = default) =>
-        await taskRepository.GetByIdAsync(taskId, ct);
+        await unitOfWork.TaskRepository.GetByIdAsync(taskId, ct);
 
     private async Task<(T? updated, IEnumerable<string> errors)> ExecuteTransactionAsync<T>(
          T entity,
@@ -115,30 +113,32 @@ public class TaskService(
     {
         var errors = new List<string>();
 
-        var strategy = context.Database.CreateExecutionStrategy(); // TODO: ResilientTransaction
+        // create execution stategy to configure resiliency and db retries
+        var strategy = unitOfWork.CreateExecutionStrategy();
         await strategy.ExecuteAsync(async () =>
         {
-            await using var transaction = await unitOfWork.BeginTransactionAsync(ct);
             try
             {
                 operation.Invoke(entity, ct);
+                // In Entity Framework, whenever you execute SaveChanges() to
+                // insert, update or delete on the database the framework will
+                // wrap that operation in a transaction.
+                // You only need to use a TransactionScope if there are several
+                // .SaveChanges() or even several different DbContext instances involved.
                 await unitOfWork.SaveAsync(ct);
-                await transaction.CommitAsync(ct);
             }
-            catch (Exception ex)
+            // to avoid locking the database, EF uses a mechanism called
+            // Optimistic concurrenty which basically is checking that
+            // nothing was changed since it was read when saving changes
+            catch (DbUpdateConcurrencyException)
             {
-                await transaction.RollbackAsync(ct);
-
-                if (ex is DbUpdateException) //TODO: fix autoincrement
+                errors = ["Data was changed before applying updates"];
+            }
+            catch (DbUpdateException ex)
+            {
+                if ((ex.GetBaseException() as NpgsqlException)?.SqlState == "23505") // Data duplication
                 {
-                    if ((ex.GetBaseException() as NpgsqlException)?.SqlState == "23505") // Data duplication
-                    {
-                        errors = ["Duplicated task names are not allowed"];
-                    }
-                }
-                else
-                {
-                    throw;
+                    errors = ["Duplicated task names are not allowed"];
                 }
             }
         });
@@ -201,5 +201,24 @@ public class TaskService(
         }*/
 
         return errors;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposed)
+        {
+            if (disposing)
+            {
+                unitOfWork.Dispose(); // dispose managed resources
+            }
+        }
+
+        disposed = true;
     }
 }

@@ -1,6 +1,25 @@
-@TaskManager_HostAddress = http://localhost:5100
+@TaskManager_HostAddress = https://localhost:7096
 
 GET {{TaskManager_HostAddress}}/tasks?page=0&count=5
 Accept: application/json
 
 ###
+POST {{TaskManager_HostAddress}}/tasks
+Content-Type: application/json
+{
+    "title": "new task",
+    "description": "some description",
+    "dueDate": "2025-07-09T19:25:43.511Z"
+}
+###
+
+###
+PATCH {{TaskManager_HostAddress}}/tasks
+Content-Type: application/json
+{
+    "id": 11,
+    "status": 1
+}
+
+###
+GET {{TaskManager_HostAddress}}/tasks/11

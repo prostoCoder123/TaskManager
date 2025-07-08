@@ -8,16 +8,16 @@ public class UnitOfWork(
   ProjectTaskContext context,
   ITaskRepository taskRepository) : IUnitOfWork, IDisposable
 {
-    private readonly ProjectTaskContext dbContext = context;
-
-    private bool disposed;
     public ITaskRepository TaskRepository { get; } = taskRepository;
 
-    public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken _ct = default) => dbContext.Database.BeginTransactionAsync(_ct);
+    //public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken _ct = default) => dbContext.Database.BeginTransactionAsync(_ct);
+    public IExecutionStrategy CreateExecutionStrategy() => dbContext.Database.CreateExecutionStrategy();
 
     public async Task SaveAsync(CancellationToken _ct = default) => _ = await dbContext.SaveChangesAsync(_ct);
 
-    public TEntity DetachedClone<TEntity>(TEntity _entity) where TEntity : class => dbContext.Entry(_entity).CurrentValues.Clone().ToObject() as TEntity ?? default!;
+    private readonly ProjectTaskContext dbContext = context;
+
+    private bool disposed;
 
     public void Dispose()
     {
@@ -25,11 +25,14 @@ public class UnitOfWork(
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool _disposing)
+    /// <summary>
+    /// the Unit of Work should implement IDisposable and dispose the context, not the repositories.
+    /// </summary>
+    protected virtual void Dispose(bool disposing)
     {
         if (!disposed)
         {
-            if (_disposing)
+            if (disposing)
             {
                 dbContext.Dispose();
             }

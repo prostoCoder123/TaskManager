@@ -11,7 +11,6 @@ namespace TaskManager.Controllers;
 public class TasksController(
     ITaskService taskService,
     IMapper mapper,
-    ITaskRepository taskRepository,
     ILogger<TasksController> logger) : ControllerBase
 {
     /// <summary>
@@ -71,7 +70,7 @@ public class TasksController(
     {
         logger.LogInformation("Try to update the task with the Id '{Id}'", taskToUpdateDto.Id);
 
-        var task = await taskRepository.GetByIdAsync(taskToUpdateDto.Id, ct);
+        var task = await taskService.GetTaskByIdAsync(taskToUpdateDto.Id, ct);
 
         if (task == null)
         {
@@ -97,7 +96,7 @@ public class TasksController(
         return errors.Any() ? BadRequest(errors) : Ok(tasks);
     }
 
-    [HttpGet("{taskId:int:min(0):max(123456789)}")]
+    [HttpGet("{taskId:int:min(0):max(2147483647)}")]
     [ProducesResponseType<ProjectTask>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)] // cache-control: public,max-age=120

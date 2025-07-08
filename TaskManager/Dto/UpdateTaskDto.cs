@@ -7,7 +7,7 @@ public class UpdateTaskDto
 {
     [Range(0, int.MaxValue)]
     [Required]
-    public int? Id { get; init; }
+    public int Id { get; init; }
 
     [MinLength(Constants.MinLength3)]
     [MaxLength(Constants.MaxLength100)]

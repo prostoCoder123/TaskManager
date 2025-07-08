@@ -9,6 +9,13 @@ public static class IQueryableExtensions
       Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? _orderBy) =>
       _orderBy == null ? _source : _orderBy(_source);
 
+    /// <summary>
+    /// applies the eager-loading expressions
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <param name="_source"></param>
+    /// <param name="_includedPaths"></param>
+    /// <returns></returns>
     public static IQueryable<TEntity> ApplyInclude<TEntity>(
       this IQueryable<TEntity> _source,
       string _includedPaths = "") where TEntity : class

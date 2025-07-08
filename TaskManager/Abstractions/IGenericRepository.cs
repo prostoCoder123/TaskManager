@@ -2,6 +2,13 @@
 
 namespace TaskManager.Abstractions;
 
+/// <summary>
+/// The repository pattern abstracts the data access logic, 
+/// hiding the specifics of how data is stored and retrieved. 
+/// This allows you to change the underlying data storage without affecting the business logic.
+/// Generic repository helps to to minimize redundant code.
+/// </summary>
+/// <typeparam name="TEntity"> An entity type </typeparam>
 public interface IGenericRepository<TEntity> where TEntity : class
 {
     IQueryable<TEntity> Get(
