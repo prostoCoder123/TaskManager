@@ -4,64 +4,59 @@
     <div v-else-if="error">Error: {{ error }}</div>
     <div v-else>
       <h3> Total tasks: {{ total }} </h3>
-      <table>
-        <thead>
+      <v-data-table-server v-model:items-per-page="perPage"
+                           :items-per-page-options="[3,5]"
+                           v-model:page="page"
+                           :items="tasks"
+                           :items-length="total"
+                           :loading="loading"
+                           :search="search"
+                           item-value="name"
+                           @update:options="fetchTasks">
+        <template v-slot:tfoot>
           <tr>
-            <th v-for="(header, i) in [ 'Id', 'Title', 'Status', 'CreatedAt' ]"
-                :key="`${header}${i}`"
-                class="header-item">
-              {{ header }}
-            </th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td rowspan="3">
+              <v-autocomplete label="Autocomplete"
+                              :items="statuses"
+                              v-model="search"
+                              v-bind="selected"></v-autocomplete>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <tr v-for="task in tasks" class="table-rows">
-            <td>{{ task.id }}</td>
-            <td>{{ task.title }}</td>
-            <td>{{ task.status }}</td>
-            <td>{{ task.createdAt }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <nav aria-label="Page navigation example">
-        <div class="pagination">
-          <span class="page-item">
-            <button type="button" class="page-link" v-if="page != 0" @click="page--;fetchTasks()"> Previous </button>
-          </span>
-          <span class="page-item">
-            <button type="button"
-                    class="page-link"
-                    v-for="pageNumber in Array.from({ length: pageCount+1 }, (value, index) => index)"
-                    @click="page = pageNumber;fetchTasks()">
-            {{pageNumber}}
-            </button>
-          </span>
-          <span class="page-item">
-            <button type="button" @click="page++;fetchTasks()" v-if="page < pageCount" class="page-link"> Next </button>
-          </span>
-        </div>
-      </nav>
+        </template>
+      </v-data-table-server>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
 
   const tasks = ref([]);
   const loading = ref(true);
   const error = ref(null);
+  const statuses = ['Новая', 'В процессе', 'Завершена', 'Просрочена']
 
   const total = ref(0);
-  const page = ref(0);
+  const page = ref(1);
   const perPage = ref(3);
   const pageCount = ref(0);
+  const search = ref(null)
+  const selected = ref('')
 
   const fetchTasks = async () =>
   {
+    console.log(search.value);
     try
     {
-      const response = await fetch(`api?page=${page.value}&count=${perPage.value}`, { mode: 'cors' });
+      const response = await fetch(
+        `api?page=${page.value - 1}&count=${perPage.value}` +
+        (search.value == null
+          ? ""
+          : `&status=${statuses.indexOf(search.value)}`), { mode: 'cors' });
+
       if (!response.ok)
       {
         throw new Error(`HTTP error, status: ${response.status}`);
@@ -71,7 +66,7 @@
       //console.log(data);
       tasks.value = data.tasks;
       total.value = data.total;
-      pageCount.value = Math.floor(data.total / perPage.value);
+      pageCount.value = Math.floor(data.total / pageCount.value);
     }
     catch (err)
     {
@@ -86,6 +81,12 @@
   onMounted(() => {
     fetchTasks();
   });
+
+  watch(selected, () => {
+    search.value = selected;
+    fetchTasks();
+    console.log("selected " + selected);
+  })
 </script>
 
 <style>
