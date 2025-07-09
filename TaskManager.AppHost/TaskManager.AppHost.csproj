@@ -20,7 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\TaskManager.MigrationService\TaskManager.MigrationService.csproj" />
     <ProjectReference Include="..\TaskManager.OverDueTasksWorker\TaskManager.OverDueTasksWorker.csproj" />
-    <ProjectReference Include="..\TaskManager.UI\taskmanager.ui.esproj" />
+    <ProjectReference Include="..\TaskManager.UI\taskmanager.ui.esproj">
+		<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+	</ProjectReference>
     <ProjectReference Include="..\TaskManager\TaskManager.csproj" />
   </ItemGroup>
 
