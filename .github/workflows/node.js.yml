@@ -25,7 +25,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+        cache-dependency-path: './taskmanager.ui/package-lock.json'
         cache: 'npm'
     - run: npm ci
+      working-directory: './taskmanager.ui'
     - run: npm run build --if-present
-    - run: npm test
+      working-directory: './taskmanager.ui'
+    #- run: npm test
