@@ -42,7 +42,6 @@
   const total = ref(0);
   const page = ref(1);
   const perPage = ref(3);
-  const pageCount = ref(0);
   const search = ref(null)
   const selected = ref('')
 
@@ -66,7 +65,6 @@
       //console.log(data);
       tasks.value = data.tasks;
       total.value = data.total;
-      pageCount.value = Math.floor(data.total / pageCount.value);
     }
     catch (err)
     {
@@ -88,9 +86,3 @@
     console.log("selected " + selected);
   })
 </script>
-
-<style>
-  .pagination {
-    display: inline-block;
-  }
-</style>

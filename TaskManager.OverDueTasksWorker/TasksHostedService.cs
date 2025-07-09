@@ -26,7 +26,7 @@ public class TasksHostedService(
     private const int ExecutionIntervalInMinutes = 2;
 
     //TODO: read from the config
-    private const string TaskManagerApiUrl = "https://localhost:7096/tasks/overdue";
+    private const string TaskManagerApiUrl = "https://localhost:7096/api/tasks/overdue";
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
